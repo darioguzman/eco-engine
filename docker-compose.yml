@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: decision_engine
+      MYSQL_USER: decision
+      MYSQL_PASSWORD: decision
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    image: dfguzman/decision-engine:1.0
+    container_name: decision-engine
+    depends_on:
+      - mysql
+    environment:
+      DATASOURCE_URL: jdbc:mysql://mysql:3306/decision_engine
+      DATASOURCE_USERNAME: decision
+      DATASOURCE_PASSWORD: decision
+      GOOGLE_CLIENT_ID: tu-client-id
+      GOOGLE_CLIENT_SECRET: tu-client-secret
+    ports:
+      - "8080:8080"
+    restart: always
+
+  frontend:
+    image: dfguzman/decision-engine-app:1.0
+    container_name: decision-engine-app
+    ports:
+      - "4173:4173" 
+    restart: always
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
