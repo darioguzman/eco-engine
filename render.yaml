@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: decision-engine-frontend
+    env: docker
+    image: dfguzman/decision-engine-app:1.0
+    plan: free
+    autoDeploy: false
+    envVars: []
+    region: oregon
+    healthCheckPath: /
+    ports:
+      - 4173
+
+  - type: web
+    name: decision-engine-backend
+    env: docker
+    image: dfguzman/decision-engine:1.0
+    plan: free
+    autoDeploy: false
+    envVars:
+      - key: DATASOURCE_URL
+        value: jdbc:mysql://mysql.freehostia.com:3306/darguz3_decision-engine
+      - key: DATASOURCE_USERNAME
+        value: darguz3_decision-engine
+      - key: DATASOURCE_PASSWORD
+        value: dario123
+      - key: GOOGLE_CLIENT_ID
+        value: tu-client-id
+      - key: GOOGLE_CLIENT_SECRET
+        value: tu-client-secret
+    region: oregon
+    healthCheckPath: /actuator/health
+    ports:
+      - 8080
